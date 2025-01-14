@@ -73,14 +73,38 @@ def demande():
     return number_1,operator,number_2
 
 
+def menu():
+    print ("\n\033[0m1. Utiliser la calculatrice \n2. Voir l'historique \n3. Supprimer l'historique \n4. Quitter le programme")
+    return input("\nQue souhaitez vous faire ? ")
+
 def main():
 
-    number_1,operator,number_2 = demande()
+    choice = menu()
 
-    resultat = calcul(number_1,operator,number_2)
+    if choice == "1":
+        number_1,operator,number_2 = demande()
+        resultat = calcul(number_1,operator,number_2)
+        folder = open("data.txt","a")
+        folder.write(f"\n{number_1} {operator} {number_2} = {resultat}")
+        folder.close()
+        print(f"\n{number_1} {operator} {number_2} = {resultat}\n")
+        main()
 
-    print(f"\n{number_1} {operator} {number_2} = {resultat}\n")
+    if choice == "2":
+        print("\n\033[1;34mVoici l'historique :")
+        folder = open("data.txt","r")
+        print(folder.read())
+        folder.close()
+        main()
 
+    if choice == "3":
+        folder = open("data.txt", "w")
+        folder.write("")
+        folder.close
+        print("\n\033[1;32mL'historique à bien été supprimé\033[0m")
+        main()
 
+    if choice == "4":
+        exit()
 if __name__ == "__main__":
     main()
