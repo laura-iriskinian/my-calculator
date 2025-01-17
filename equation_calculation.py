@@ -30,7 +30,7 @@ def ask_equation():
     #analyze input to separate different types (operators, int and floats)
     position_list_equation = 0
     element_equation = list(user_input)
-    valid_operators = ["+","-","*","/","%","**","//"]
+    valid_operators = ["+","-","*","/","%","**","//","(",")"]
     expo_floor_operators = ["*","/"]
     list_number = search_number()
     try :  
@@ -122,23 +122,48 @@ def substraction(equation):
         equation_list[position-1:position+2] = [calculation]
     return tuple(equation_list)
 
-#Function to set calculation priorities      
+    
+# Fonction qui gère les parenthèses et effectue les calculs selon la priorité
 def priority(equation):
-    try:
-        updated_equation = exponentiation(equation)
-        updated_equation = multiplication(updated_equation)
-        updated_equation = division(updated_equation)
-        updated_equation = modulus(updated_equation)
-        updated_equation = floor_division(updated_equation)
-        updated_equation = addition(updated_equation)
-        updated_equation = substraction(updated_equation)
-    except TypeError:
-        print("Error : 2 operators in a row")
-        main()
-    except ZeroDivisionError:
-        print('Division/Modulus by zero impossible')
-        main()
-    return updated_equation
+    equation_list = list(equation)  # Convertir l'équation en liste
+    
+    # Tant qu'il y a des parenthèses à traiter
+    while '(' in equation_list:
+        # Trouver les indices de la parenthèse ouvrante et fermante
+        start_index = equation_list.index('(')
+        end_index = equation_list.index(')')
+        
+        # Extraire l'équation à l'intérieur des parenthèses
+        sub_equation = equation_list[start_index + 1:end_index]
+        
+        # Effectuer les calculs dans les parenthèses
+        sub_equation_result = list(perform_operations(sub_equation))
+        
+        # Remplacer l'expression entre parenthèses par son résultat
+        equation_list = equation_list[:start_index] + sub_equation_result + equation_list[end_index + 1:]
+    
+    # Une fois toutes les parenthèses traitées, effectuer les calculs restants
+    final_result = perform_operations(equation_list)
+    
+    return tuple(final_result)
+
+# Fonction auxiliaire pour effectuer les opérations selon la priorité
+def perform_operations(equation):
+    # On s'assure que l'entrée est une liste
+    equation_list = list(equation)
+    # D'abord traiter l'exponentiation
+    equation_list = exponentiation(equation_list)
+    # Puis traiter multiplication, division, et le modulo
+    equation_list = multiplication(equation_list)
+    equation_list = division(equation_list)
+    equation_list = modulus(equation_list)
+    # Traiter la division entière
+    equation_list = floor_division(equation_list)
+    # Enfin addition et soustraction
+    equation_list = addition(equation_list)
+    equation_list = substraction(equation_list)
+    
+    return tuple(equation_list)  # Retourner la liste mise à jour
 
 #Main program loop
 def main():
