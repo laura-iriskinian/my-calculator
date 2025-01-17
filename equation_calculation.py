@@ -2,6 +2,7 @@
 
 def ask_equation():
     user_input = input("Enter your equation : ")
+    #analyze input to separate different types (operators, int and floats)
     i = 0
     element_equation = list(user_input)
     valid_operators = ["+","-","*","/","%","**","//"]
@@ -15,7 +16,7 @@ def ask_equation():
         i+=1
     return tuple(element_equation)
 
-
+#Function to carry out multiplication
 def multiplication(equation):
     equation_list = list(equation)
 
@@ -25,7 +26,7 @@ def multiplication(equation):
         equation_list[position-1:position+2] = [calculation]
     return tuple(equation_list)
 
-
+#Function to carry out division
 def division(equation):
     equation_list = list(equation)
     try:
@@ -38,6 +39,7 @@ def division(equation):
         print("division par zéro impossible")
         return equation_list
 
+#Function to carry out modulus
 def modulus(equation):
     equation_list = list(equation)
 
@@ -47,6 +49,7 @@ def modulus(equation):
         equation_list[position-1:position+2] = [calculation]
     return tuple(equation_list)
 
+#Function to carry out exponentiation
 def exponentiation(equation):
     equation_list = list(equation)
 
@@ -56,6 +59,7 @@ def exponentiation(equation):
         equation_list[position-1:position+2] = [calculation]
     return tuple(equation_list)
 
+#Function to carry out floor division
 def floor_division(equation):
     equation_list = list(equation)
 
@@ -65,6 +69,7 @@ def floor_division(equation):
         equation_list[position-1:position+2] = [calculation]
     return tuple(equation_list)
 
+#Function to carry out addition
 def addition(equation):
     equation_list = list(equation)
     while "+" in equation_list:
@@ -73,6 +78,7 @@ def addition(equation):
         equation_list[position-1:position+2] = [calculation]
     return tuple(equation_list)
 
+#Function to carry out substraction
 def substraction(equation):
     equation_list = list(equation)
 
@@ -81,7 +87,8 @@ def substraction(equation):
         calculation= equation_list[position-1] - equation_list[position+1]
         equation_list[position-1:position+2] = [calculation]
     return tuple(equation_list)
-        
+
+#Function to set calculation priorities      
 def priority(equation):
     
     updated_equation = multiplication(equation)
@@ -94,6 +101,7 @@ def priority(equation):
 
     return updated_equation
 
+#Main program loop
 def main():
 
     user_equation = ask_equation()
@@ -103,7 +111,7 @@ def main():
     print(f"{user_equation} = {final_result}")
     
 
-# the main def 
+# the main function 
 if __name__ == "__main__":
     main()
 
