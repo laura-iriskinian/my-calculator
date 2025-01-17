@@ -16,22 +16,44 @@ def menu():
     
     return input("\nYour choice (1-4) : ")
 
+def search_number():
+    create_number = 0
+    list_number = []
+    while create_number <= 10000:
+        list_number.append(str(create_number))
+        create_number+=1
+    return list_number
+
 #Function to get user input
 def ask_equation():
     user_input = input("Enter your equation : ")
     #analyze input to separate different types (operators, int and floats)
-    i = 0
+    position_list_equation = 0
     element_equation = list(user_input)
     valid_operators = ["+","-","*","/","%","**","//"]
-    while i < len(element_equation):
-        if "." in element_equation[i] :
-            element_equation[i] = float(element_equation[i])
-        elif element_equation[i] in valid_operators:
-            element_equation[i] = str(element_equation[i])
-        else:
-            element_equation[i] = int(element_equation[i])
-        i+=1
-    return tuple(element_equation)
+    expo_floor_operators = ["*","/"]
+    list_number = search_number()
+    try :  
+        while position_list_equation < len(element_equation):
+        
+            if "." in element_equation[position_list_equation] :
+                element_equation[position_list_equation] = float(element_equation[position_list_equation])
+            elif element_equation[position_list_equation] in expo_floor_operators and element_equation[position_list_equation+1] in expo_floor_operators:
+                bla = element_equation.pop(position_list_equation+1)
+                element_equation[position_list_equation] = element_equation[position_list_equation] + bla
+            elif element_equation[position_list_equation] in valid_operators:
+                element_equation[position_list_equation] = str(element_equation[position_list_equation])
+            elif element_equation[position_list_equation] in list_number:
+                element_equation[position_list_equation] = int(element_equation[position_list_equation])
+            else:
+                ValueError
+                print("Input character error, enter a valid equation")
+                return ask_equation()
+            position_list_equation+=1
+        return tuple(element_equation)
+    except IndexError:
+        print("error, too many operators in a row")
+        ask_equation()
 
 #Function to carry out multiplication
 def multiplication(equation):
@@ -46,20 +68,16 @@ def multiplication(equation):
 #Function to carry out division
 def division(equation):
     equation_list = list(equation)
-    try:
-        while "/" in equation_list:
-            position = equation_list.index("/")
-            calculation= equation_list[position-1] / equation_list[position+1]
-            equation_list[position-1:position+2] = [calculation] 
-        return tuple(equation_list)
-    except ZeroDivisionError:
-        print("division by 0 impossible")
-        return equation_list
+    while "/" in equation_list:
+        position = equation_list.index("/")
+        calculation= equation_list[position-1] / equation_list[position+1]
+        equation_list[position-1:position+2] = [calculation] 
+    return tuple(equation_list)
+
 
 #Function to carry out modulus
 def modulus(equation):
     equation_list = list(equation)
-
     while "%" in equation_list:
         position = equation_list.index("%")
         calculation= equation_list[position-1] % equation_list[position+1]
@@ -70,7 +88,7 @@ def modulus(equation):
 def exponentiation(equation):
     equation_list = list(equation)
 
-    while "**" in equation:
+    while "**" in equation_list:
         position = equation_list.index("**")
         calculation= equation_list[position-1] ** equation_list[position+1]
         equation_list[position-1:position+2] = [calculation]
@@ -79,7 +97,6 @@ def exponentiation(equation):
 #Function to carry out floor division
 def floor_division(equation):
     equation_list = list(equation)
-
     while "//" in equation_list:
         position = equation_list.index("//")
         calculation= equation_list[position-1] // equation_list[position+1]
@@ -107,15 +124,20 @@ def substraction(equation):
 
 #Function to set calculation priorities      
 def priority(equation):
-    
-    updated_equation = multiplication(equation)
-    updated_equation = division(updated_equation)
-    updated_equation = modulus(updated_equation)
-    updated_equation = exponentiation(updated_equation)
-    updated_equation = floor_division(updated_equation)
-    updated_equation = addition(updated_equation)
-    updated_equation = substraction(updated_equation)
-
+    try:
+        updated_equation = exponentiation(equation)
+        updated_equation = multiplication(updated_equation)
+        updated_equation = division(updated_equation)
+        updated_equation = modulus(updated_equation)
+        updated_equation = floor_division(updated_equation)
+        updated_equation = addition(updated_equation)
+        updated_equation = substraction(updated_equation)
+    except TypeError:
+        print("Error : 2 operators in a row")
+        main()
+    except ZeroDivisionError:
+        print('Division/Modulus by zero impossible')
+        main()
     return updated_equation
 
 #Main program loop
