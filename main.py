@@ -1,3 +1,18 @@
+import json
+
+#Create Json file to load history into
+file_name = "History.json"
+
+def load_history():
+    with open(file_name, "r") as file:
+        return json.load(file)
+
+#Save history to file with Json
+def save_history(history):
+    with open(file_name, "w") as file:
+        json.dump(history, file)
+            
+
 # condition for calculation including ZeroDivision
 def calculation (number_1,operator,number_2):
     try:
@@ -83,26 +98,30 @@ def main():
     if choice == "1":
         number_1,operator,number_2 = ask()
         result = calculation(number_1,operator,number_2)
-        folder = open("historical.txt","a")
-        folder.write(f"\n{number_1} {operator} {number_2} = {result}")
-        folder.close()
+
+        #convert expression list into Json string
+        history = load_history()
+        history.append(f"{number_1} {operator} {number_2} = {result}")
+        save_history(history)
+
         print(f"\n\033[93m{number_1} {operator} {number_2} = {result}\n\033[0m")
         main()
 
     # read the historical folder 
     elif choice == "2":
-        print("\n\033[1;34mHere is the history :")
-        folder = open("historical.txt","r")
-        print(folder.read())
-        folder.close()
+        history = load_history()
+        print("\n\033[1;34mHere is the history:")
+        if history:
+            for record in history:
+                print(record)
+        else:
+            print("No history found.")
         main()
 
-    # reset the historical folder with ""
+    # reset the history folder with ""
     elif choice == "3":
-        folder = open("historical.txt", "w")
-        folder.write("")
-        folder.close
-        print("\n\033[1;32mThe history has been deleted\033[0m")
+        save_history([])
+        print("\n\033[1;32mHistory has been deleted.\033[0m")
         main()
 
     # exit the program
