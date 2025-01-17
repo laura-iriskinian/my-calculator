@@ -1,5 +1,6 @@
 
 
+#Function to get user input
 def ask_equation():
     user_input = input("Enter your equation : ")
     #analyze input to separate different types (operators, int and floats)
