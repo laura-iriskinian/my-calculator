@@ -1,12 +1,10 @@
 import json
 
-file_name = "history.json"
-
 #Set a function to create json file to save history
 def create_history():
     try:
         with open("history.json","x") as file:
-            json.dump([], file)
+            json.dump({}, file)
     except FileExistsError:
         pass
 
@@ -28,29 +26,29 @@ def search_number():
 def ask_equation():
     user_input = input("Enter your equation : ")
     #analyze input to separate different types (operators, int and floats)
-    position_list_equation = 0
-    element_equation = list(user_input)
+    position = 0
+    listed_equation = list(user_input)
     valid_operators = ["+","-","*","/","%","**","//"]
     expo_floor_operators = ["*","/"]
     list_number = search_number()
     try :  
-        while position_list_equation < len(element_equation):
+        while position < len(listed_equation):
         
-            if "." in element_equation[position_list_equation] :
-                element_equation[position_list_equation] = float(element_equation[position_list_equation])
-            elif element_equation[position_list_equation] in expo_floor_operators and element_equation[position_list_equation+1] in expo_floor_operators:
-                bla = element_equation.pop(position_list_equation+1)
-                element_equation[position_list_equation] = element_equation[position_list_equation] + bla
-            elif element_equation[position_list_equation] in valid_operators:
-                element_equation[position_list_equation] = str(element_equation[position_list_equation])
-            elif element_equation[position_list_equation] in list_number:
-                element_equation[position_list_equation] = int(element_equation[position_list_equation])
+            if "." in listed_equation[position] :
+                listed_equation[position] = float(listed_equation[position])
+            elif listed_equation[position] in expo_floor_operators and listed_equation[position+1] in expo_floor_operators:
+                bla = listed_equation.pop(position+1)
+                listed_equation[position] = listed_equation[position] + bla
+            elif listed_equation[position] in valid_operators:
+                listed_equation[position] = str(listed_equation[position])
+            elif listed_equation[position] in list_number:
+                listed_equation[position] = int(listed_equation[position])
             else:
                 ValueError
                 print("Input character error, enter a valid equation")
                 return ask_equation()
-            position_list_equation+=1
-        return tuple(element_equation)
+            position+=1
+        return tuple(listed_equation)
     except IndexError:
         print("error, too many operators in a row")
         ask_equation()
@@ -150,31 +148,38 @@ def main():
     if choice == "1": #ask for equation and carry out calculation
         user_equation = ask_equation()
         final_result = priority(user_equation)
+        user_equation = str(user_equation)
+        history = {user_equation : final_result}
 
         #add equation to history
         with open("history.json", "r") as file:
             history = json.load(file)
-        history.append(f"{user_equation} = {final_result}")
+        if user_equation in history:
+            if isinstance(history[user_equation], list):
+                history[user_equation].append(final_result)
+        else:
+            history[user_equation] = [final_result]
+
         with open("history.json", "w") as file:
-                json.dump(history, file)
+            json.dump(history, file)
 
         print(f"{user_equation} = {final_result}")
         main()
 
-    elif choice == "2": #view calcuklator history
+    elif choice == "2": #view calculator history
         with open("history.json", "r") as file:
             history = json.load(file)
             print("\n\033[1;34mHere is the history: ")
         if history:
-            for entry in history:
-                print(entry)
+            for equation, result in history.items():
+                print(f"{equation} = {result}")
         else:
             print("\nNo history found")
         main()
     
     elif choice == "3": #delete history
         with open("history.json", "w") as file:
-            history = json.dump([], file)
+            history = json.dump({}, file)
             print("\n\033[1;32mHistory has been deleted.\033[0m")
         main()
     
