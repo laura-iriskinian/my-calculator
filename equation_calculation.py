@@ -22,33 +22,99 @@ def search_number():
         create_number+=1
     return list_number
 
+def concat(element_equation,valid_operators):
+    
+    index_operator = []
+    index_equation = []
+    n = 0
+    try:
+        while n < len(element_equation):
+
+            # loop to create list with index operator
+            for index, equation in enumerate(element_equation):
+                if equation in valid_operators:
+                    index_operator.append(index)
+
+            # loop to create list with index equation
+            for ind, equation in enumerate(element_equation):
+                index_equation.append(ind)
+            
+            if len(index_operator) == 0:
+                print("\033[1;31mNot operator in equation, enter a valid equation.\033[0m")
+                return main()
+            
+            else:
+                star_index_operator = index_operator[n]
+                
+                dif_star_index_equation = index_operator[0]
+                dif_last_index_equation = index_equation[-1] - index_operator[-1]
+
+
+
+                if len(index_operator) >=2:
+                    end_index_operator = index_operator[n+1]
+                    index_operator[:] = []  
+                    index_equation[:] = []
+                    n -= 1
+
+                elif star_index_operator >= 2 and n == 0:
+
+                    group_elements = "".join(element_equation[0 :star_index_operator])
+                    element_equation[0:star_index_operator] = [group_elements]
+                    index_operator[:] = []  
+                    index_equation[:] = []
+                    n -= 1
+
+                elif dif_last_index_equation >= 2 and n == 0:
+
+                    group_elements = "".join(element_equation[index_operator[-1]+1:index_equation[-1]+1])
+                    element_equation[index_operator[-1]+1:index_equation[-1]+1] = [group_elements]
+                    index_equation[:] = []
+                    index_equation[:] = []
+                    n -=1
+
+                elif dif_star_index_equation >=2:
+                    group_elements = "".join(element_equation[star_index_operator+1:end_index_operator])
+                    element_equation[star_index_operator+1:end_index_operator] = [group_elements]
+                    index_operator[:] = []
+                    index_equation[:] = []
+
+                n +=1    
+    except IndexError:
+        return element_equation
+
+
 #Function to get user input
 def ask_equation():
     user_input = input("Enter your equation : ")
     #analyze input to separate different types (operators, int and floats)
-    position = 0
-    listed_equation = list(user_input)
+    position_list_equation = 0
+    element_equation = list(user_input)
     valid_operators = ["+","-","*","/","%","**","//"]
+    grouped_equation = concat(element_equation,valid_operators)
     expo_floor_operators = ["*","/"]
     list_number = search_number()
     try :  
-        while position < len(listed_equation):
+        while position_list_equation < len(grouped_equation):
         
-            if "." in listed_equation[position] :
-                listed_equation[position] = float(listed_equation[position])
-            elif listed_equation[position] in expo_floor_operators and listed_equation[position+1] in expo_floor_operators:
-                bla = listed_equation.pop(position+1)
-                listed_equation[position] = listed_equation[position] + bla
-            elif listed_equation[position] in valid_operators:
-                listed_equation[position] = str(listed_equation[position])
-            elif listed_equation[position] in list_number:
-                listed_equation[position] = int(listed_equation[position])
+            if "." in grouped_equation[position_list_equation] :
+                grouped_equation[position_list_equation] = float(grouped_equation[position_list_equation])
+            elif grouped_equation[position_list_equation] in expo_floor_operators and grouped_equation[position_list_equation+1] in expo_floor_operators:
+                bla = grouped_equation.pop(position_list_equation+1)
+                grouped_equation[position_list_equation] = grouped_equation[position_list_equation] + bla
+            elif grouped_equation[position_list_equation] in valid_operators:
+                grouped_equation[position_list_equation] = str(grouped_equation[position_list_equation])
+            elif grouped_equation[position_list_equation] in list_number:
+                grouped_equation[position_list_equation] = int(grouped_equation[position_list_equation])
+            # elif grouped_equation not in valid_operators:
+            #     print("Not operator in equation, enter a valid equation")
+            #     return ask_equation()
             else:
                 ValueError
                 print("Input character error, enter a valid equation")
                 return ask_equation()
-            position+=1
-        return tuple(listed_equation)
+            position_list_equation+=1
+        return tuple(grouped_equation)
     except IndexError:
         print("error, too many operators in a row")
         ask_equation()
