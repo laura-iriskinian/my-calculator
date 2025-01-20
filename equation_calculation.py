@@ -14,6 +14,7 @@ def menu():
     
     return input("\nYour choice (1-4) : ")
 
+#Allow recognition of numbers in input string
 def search_number():
     create_number = 0
     list_number = []
@@ -22,8 +23,8 @@ def search_number():
         create_number+=1
     return list_number
 
+#Merge the different parts of the input to carry out valid operations
 def concat(element_equation,valid_operators):
-    
     index_operator = []
     index_equation = []
     expo_floor_operators = ["*","/"]
@@ -31,12 +32,12 @@ def concat(element_equation,valid_operators):
     try:
         while n < len(element_equation):
 
-            # loop to create list with index operator
+            # loop to create list with operator index 
             for index, equation in enumerate(element_equation):
                 if equation in valid_operators:
                     index_operator.append(index)
 
-            # loop to create list with index equation
+            # loop to create list with equation index 
             for ind, equation in enumerate(element_equation):
                 index_equation.append(ind)
             
@@ -50,7 +51,7 @@ def concat(element_equation,valid_operators):
                 
                 dif_last_index_equation = index_equation[-1] - index_operator[-1]
 
-                # elif to frists number (2 2 + ...)
+                # elif to first numbers (2 2 + ...)
                 if start_index_operator >= 2 and n == 0:
 
                     group_elements = "".join(element_equation[0 :start_index_operator])
@@ -68,12 +69,12 @@ def concat(element_equation,valid_operators):
                     index_equation[:] = []
                     n -=1
 
-                # if more 1 operator
+                # if more than 1 operator
                 elif len(index_operator) >=2:
                     double_operator = index_operator[n+1]-index_operator[n]
                     end_index_operator = index_operator[n+1]
                     dif_start_index_equation = end_index_operator - start_index_operator
-                    # for double operator : to ** or //
+                    # for double operator : ** or //
                     if double_operator == 1 and element_equation[index_operator[n]] in expo_floor_operators and element_equation[index_operator[n+1]] in expo_floor_operators:
                         end_index_operator = index_operator[n+1]
                         stack_operator = element_equation.pop(end_index_operator)
@@ -95,8 +96,6 @@ def concat(element_equation,valid_operators):
                         index_operator[:] = []  
                         index_equation[:] = []
                         # n -= 1
-
-
                 n +=1    
                 # if n+1 error, this function is ok
     except IndexError:
@@ -130,7 +129,7 @@ def ask_equation():
             position_list_equation+=1
         return tuple(grouped_equation)
     except IndexError:
-        print("error, too many operators in a row")
+        print("Error, too many operators in a row")
         ask_equation()
 
 #Function to carry out multiplication
@@ -211,10 +210,10 @@ def priority(equation):
         updated_equation = addition(updated_equation)
         updated_equation = substraction(updated_equation)
     except TypeError:
-        print("Error : 2 operators in a row")
+        print("\033[1;31mError : 2 operators in a row\033[0m")
         main()
     except ZeroDivisionError:
-        print('Division/Modulus by zero impossible')
+        print('\033[1;31mDivision/Modulus by zero impossible\033[0m')
         main()
     return updated_equation
 
