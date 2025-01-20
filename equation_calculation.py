@@ -45,16 +45,16 @@ def concat(element_equation,valid_operators):
                 return main()
             
             else:
-                star_index_operator = index_operator[n]
+                start_index_operator = index_operator[n]
                 
                 
                 dif_last_index_equation = index_equation[-1] - index_operator[-1]
 
                 # elif to frists number (2 2 + ...)
-                if star_index_operator >= 2 and n == 0:
+                if start_index_operator >= 2 and n == 0:
 
-                    group_elements = "".join(element_equation[0 :star_index_operator])
-                    element_equation[0:star_index_operator] = [group_elements]
+                    group_elements = "".join(element_equation[0 :start_index_operator])
+                    element_equation[0:start_index_operator] = [group_elements]
                     index_operator[:] = []  
                     index_equation[:] = []
                     n -= 1
@@ -68,15 +68,12 @@ def concat(element_equation,valid_operators):
                     index_equation[:] = []
                     n -=1
 
-
-
-
-                # for double operator :
-
+                # if more 1 operator
                 elif len(index_operator) >=2:
                     double_operator = index_operator[n+1]-index_operator[n]
                     end_index_operator = index_operator[n+1]
-                    dif_star_index_equation = end_index_operator - star_index_operator
+                    dif_start_index_equation = end_index_operator - start_index_operator
+                    # for double operator : to ** or //
                     if double_operator == 1 and element_equation[index_operator[n]] in expo_floor_operators and element_equation[index_operator[n+1]] in expo_floor_operators:
                         end_index_operator = index_operator[n+1]
                         stack_operator = element_equation.pop(end_index_operator)
@@ -84,12 +81,14 @@ def concat(element_equation,valid_operators):
                         index_operator[:] = []
                         index_equation[:] = []
                         n-=1
+                    #  if not ** or //
                     elif double_operator == 1:
                         print("\033[1;31mDouble operator in equation, enter a valid equation.\033[0m")
                         return main()
-                    elif dif_star_index_equation >=2:
-                        group_elements = "".join(element_equation[star_index_operator+1:end_index_operator])
-                        element_equation[star_index_operator+1:end_index_operator] = [group_elements]
+                    # regroup midle elements
+                    elif dif_start_index_equation >=2:
+                        group_elements = "".join(element_equation[start_index_operator+1:end_index_operator])
+                        element_equation[start_index_operator+1:end_index_operator] = [group_elements]
                         index_operator[:] = []
                         index_equation[:] = []
                     else:
@@ -99,6 +98,7 @@ def concat(element_equation,valid_operators):
 
 
                 n +=1    
+                # if n+1 error, this function is ok
     except IndexError:
         return element_equation
 
